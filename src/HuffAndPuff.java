@@ -132,7 +132,7 @@ public class HuffAndPuff {
     }
 
     public static void main(String[] args){
-        final String test = "aaa";
+        final String test = "aaabbcdeffff";
         //creates table with # occurences of each letter
         final int[] ft = buildFrequencyTable(test);
         final Node hufTree = buildHuffmanTree(ft);
