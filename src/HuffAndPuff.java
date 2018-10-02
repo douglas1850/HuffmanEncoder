@@ -87,7 +87,34 @@ public class HuffAndPuff {
     }
 
     public String decompress(final HuffmanEncodedResult result){
-        return null;
+        final StringBuilder resultBuilder = new StringBuilder();
+        
+        Node current = result.getRoot();
+        int i = 0;
+
+        /*
+        for each bit traverse down to the leaf in order to determine where
+        that portion of the msg starts and ends. Then append to the resultBuilder
+        and append the char and do it again for each char of the message
+         */
+        while(i < result.getEncodedData().length()){
+            //starting from root of tree
+            while(!current.isLeaf()){
+                char bit = result.getEncodedData().charAt(i);
+                if(bit == '1'){
+                    current = current.rightChild;
+                } else if(bit == '0'){
+                    current = current.leftChild;
+                } else {
+                    throw new IllegalArgumentException("Invalid bit" + bit);
+                }
+                i++;
+            }
+            resultBuilder.append(current.character);
+            current = result.getRoot();
+        }
+
+        return resultBuilder.toString();
     }
 
     static class Node implements Comparable<Node>{
@@ -129,18 +156,32 @@ public class HuffAndPuff {
             this.root = root;
         }
 
+        public Node getRoot(){
+            return this.root;
+        }
+
+        public String getEncodedData(){
+            return this.encodedData;
+        }
+
     }
 
     public static void main(String[] args){
-        final String test = "aaabbcdeffff";
+        final String test = "aaabcdee";
+        /*
         //creates table with # occurences of each letter
         final int[] ft = buildFrequencyTable(test);
         final Node hufTree = buildHuffmanTree(ft);
         final Map<Character, String> lookup = buildLookupTable(hufTree);
-        System.out.println(hufTree);
-        /*
+        */
+         /*
         When done correctly, huffman encoding will save more used values higher in the tree
         so that traversal can be more efficient
          */
+
+        final HuffAndPuff encoder = new HuffAndPuff();
+        final HuffmanEncodedResult result = encoder.compress(test);
+        System.out.println("Encoded message: " + result.encodedData);
+        System.out.println("Decoded message: " + encoder.decompress(result));
     }
 }
